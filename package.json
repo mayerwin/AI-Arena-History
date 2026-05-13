@@ -1,0 +1,13 @@
+{
+  "name": "ai-arena-history",
+  "version": "1.0.0",
+  "description": "Arena AI Model ELO History",
+  "main": "update_data.js",
+  "scripts": {
+    "update": "node update_data.js"
+  },
+  "dependencies": {
+    "duckdb": "^1.1.3",
+    "jsdom": "^29.1.1"
+  }
+}
