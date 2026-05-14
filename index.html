@@ -138,18 +138,120 @@
             min-height: 440px;
         }
 
-        .content-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;
+        .section-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
+        }
+        .intro-grid,
+        .caveats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+        .caveats-block {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+        .section-heading {
+            margin: 0;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .section-heading::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+            opacity: 0.45;
         }
         .card {
             background: var(--card-bg); border: 1px solid var(--border-color);
             border-radius: 12px; padding: 2rem;
-            transition: background-color 0.3s ease, border-color 0.3s ease;
+            transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.25s ease, box-shadow 0.25s ease;
         }
         .card h2 { color: var(--accent); margin-top: 0; }
         .card p { color: var(--text-muted); }
-        .card ul { color: var(--text-muted); padding-left: 1.2rem; }
-        .card li { margin-bottom: 0.5rem; }
+        .card ul { color: var(--text-muted); padding-left: 1.2rem; margin: 1rem 0 0 0; }
+        .card li { margin-bottom: 0.55rem; line-height: 1.6; }
+        .card li:last-child { margin-bottom: 0; }
+        .card code {
+            font-family: 'JetBrains Mono', 'SF Mono', Consolas, Menlo, monospace;
+            font-size: 0.85em;
+            padding: 0.1em 0.4em;
+            border-radius: 4px;
+            background: rgba(127, 127, 127, 0.18);
+            color: var(--text-main);
+        }
+        .caveat-card {
+            position: relative;
+        }
+        .caveat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 32px -16px rgba(0, 0, 0, 0.45);
+        }
+        .caveat-number {
+            position: absolute;
+            top: 0.6rem;
+            right: 1.5rem;
+            font-size: 5rem;
+            font-weight: 800;
+            line-height: 1;
+            background: linear-gradient(180deg, var(--accent), transparent 80%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0.35;
+            pointer-events: none;
+            user-select: none;
+            font-family: 'Outfit', sans-serif;
+            letter-spacing: -0.03em;
+        }
+        .caveat-card h2,
+        .caveat-card p {
+            position: relative;
+            z-index: 1;
+        }
+        .related-band {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-left: 3px solid var(--accent);
+            border-radius: 8px;
+            padding: 1.25rem 1.75rem;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        .related-band p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.65;
+        }
+        .related-band p + p {
+            margin-top: 0.5rem;
+        }
+        .related-band strong {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+        @media (max-width: 768px) {
+            .intro-grid,
+            .caveats-grid {
+                grid-template-columns: 1fr;
+            }
+            .section-stack {
+                gap: 2rem;
+            }
+            .caveat-number {
+                font-size: 4rem;
+            }
+        }
         a { color: var(--accent); text-decoration: none; }
         a:hover { text-decoration: underline; }
 
@@ -213,7 +315,7 @@
             <span id="theme-label" class="theme-label">Auto</span>
         </button>
         <h1>Arena AI Model Elo History</h1>
-        <p class="subtitle">Tracking the public Elo lifecycle of flagship AI models over time — to surface any nerfing, censorship, or quantization that the data reveals.</p>
+        <p class="subtitle">Tracking the public Elo lifecycle of flagship AI models over time to reveal potential nerfing.</p>
     </header>
 
     <main>
@@ -222,32 +324,44 @@
             <div id="chart-container"></div>
         </div>
 
-        <div class="content-grid">
-            <div class="card">
-                <h2>Why this exists?</h2>
-                <p>AI labs frequently update their models post-launch, and users regularly report perceived "nerfs": excessive quantization (to save compute costs), aggressive censorship, or behavioral degradation. This chart plots the public Elo lifecycle of each lab's flagship so any such trends would be visible at a glance. It's an imperfect lens (see caveats below) but the most consistent long-running signal currently available.</p>
-                <p><strong>Caveat 1 — Web UIs vs. API:</strong> Arena AI tests model performance via API endpoints (the "raw" model). Consumer chat interfaces (like gemini.com or chatgpt.com) often add system prompts, safety filters, and UI-specific wrappers not present in the raw API. Providers may also silently switch to <strong>quantized (lower-precision)</strong> versions of models to save compute during peak load, leading to perceived "nerfing" the API benchmarks don't fully capture. <strong>PRs are welcome</strong> for data sources representing true web-interface evaluations.</p>
-                <p><strong>Caveat 2 — Elo is relative:</strong> Arena's Elo rating measures performance <em>relative</em> to the rest of the leaderboard. When stronger models join — or peers improve — an existing model's Elo can drift down even if nothing about that model has changed. Conversely, if every model degrades in parallel, the rating won't reveal it. Elo is the least-imperfect long-running proxy I could find; a historical fixed-benchmark dataset would have made this a cleaner study, but I couldn't locate one — pointers welcome.</p>
-            </div>
-            <div class="card">
-                <h2>Where does the data come from?</h2>
-                <p>The data is automatically fetched daily from the official <a href="https://huggingface.co/datasets/lmarena-ai/leaderboard-dataset" target="_blank" rel="noopener">LM Arena Leaderboard Dataset</a> on Hugging Face. The Arena relies on thousands of blind, crowdsourced human evaluations, making it the most robust metric of actual model capability.</p>
-            </div>
-            <div class="card">
-                <h2>How does the chart logic work?</h2>
-                <p>Each major AI lab has exactly <strong>ONE curve</strong> representing their flagship lineage. At each point in time the curve tracks the lab's <strong>highest-rated</strong> flagship-eligible model on the leaderboard — not just the most recently announced one.</p>
-                <ul>
-                    <li><strong>Highest-Elo flagship:</strong> If a lab ships a mid-tier model (e.g. Sonnet) while a higher-tier one (e.g. Opus) is still the top performer, the curve stays on Opus.</li>
-                    <li><strong>Inference-mode variants collapsed:</strong> Suffixes like <code>-thinking</code>, <code>-reasoning</code>, and <code>-high</code> are the same underlying model in a different mode — they're merged so the curve doesn't flip-flop between them.</li>
-                    <li><strong>New releases:</strong> Shown as marker points with labels, often accompanied by a jump in score.</li>
-                    <li><strong>Possible degradation:</strong> Any downward trend in a model's lifecycle between releases is visible here — but read the caveats first: an Elo drop can also reflect stronger competitors entering the leaderboard, not the model itself changing.</li>
-                </ul>
-            </div>
-            <div class="card">
-                <h2>Related work</h2>
-                <p>For a Claude-only view, <a href="https://marginlab.ai/trackers/claude-code/" target="_blank" rel="noopener">marginlab.ai's Claude Code tracker</a> follows Claude's performance specifically over time — a complementary lens if you care about the Claude lineage in particular, since it can capture signals that an Arena-wide Elo view doesn't.</p>
-                <p>If you know of other longitudinal trackers — especially anything benchmarking the actual web/chat interfaces rather than raw API endpoints, or any historical fixed-benchmark dataset — please open a PR or issue and I'll add it here.</p>
-            </div>
+        <div class="section-stack">
+            <section class="intro-grid">
+                <div class="card">
+                    <h2>Why this exists</h2>
+                    <p>AI labs frequently update their models post-launch, and users regularly report perceived "nerfs": excessive quantization (to save compute costs), aggressive censorship, or behavioral degradation. This chart plots each flagship's public Elo lifecycle on one timeline, so any such trend would be visible at a glance.</p>
+                    <p>Data is fetched daily from the official <a href="https://huggingface.co/datasets/lmarena-ai/leaderboard-dataset" target="_blank" rel="noopener">Arena AI Leaderboard Dataset</a> on Hugging Face, built from thousands of blind, crowdsourced head-to-head human votes. It's an imperfect lens (see caveats below) but the most consistent long-running signal currently available.</p>
+                </div>
+                <div class="card">
+                    <h2>How the chart works</h2>
+                    <p>Each lab gets exactly <strong>one curve</strong>, tracking that lab's <strong>highest-rated</strong> flagship-eligible model at every point in time, not just the most recently announced one.</p>
+                    <ul>
+                        <li>If a lab ships a mid-tier model (e.g. Sonnet) while a higher-tier one (e.g. Opus) still ranks above it, the curve stays on Opus.</li>
+                        <li>Inference-mode variants (suffixes like <code>-thinking</code>, <code>-reasoning</code>, <code>-high</code>) are merged into the parent so the curve doesn't flip-flop between modes.</li>
+                        <li>New releases appear as labeled marker points, often with a jump in score.</li>
+                        <li>Downward trends between releases are visible too, but read the caveats below before treating them as proof.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="caveats-block">
+                <h3 class="section-heading">Caveats</h3>
+                <div class="caveats-grid">
+                    <div class="card caveat-card">
+                        <span class="caveat-number">01</span>
+                        <h2>Web UIs vs. API</h2>
+                        <p>Arena tests models via API endpoints, i.e. the "raw" model. Consumer chat interfaces (gemini.com, chatgpt.com, etc.) add system prompts, safety filters, and UI wrappers not present in the raw API, and providers may silently switch to <strong>quantized (lower-precision)</strong> versions under load. Perceived "nerfing" in those products may not show up here.</p>
+                    </div>
+                    <div class="card caveat-card">
+                        <span class="caveat-number">02</span>
+                        <h2>Elo is relative</h2>
+                        <p>Ratings shift against the rest of the leaderboard. When stronger models enter (or peers improve), an unchanged model's Elo can drift down anyway; conversely, if every model regresses in parallel, Elo won't reveal it. A fixed-benchmark longitudinal dataset would be cleaner, but no such public archive seems to exist.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="related-band">
+                <p><strong>Related:</strong> for a Claude-only view, <a href="https://marginlab.ai/trackers/claude-code/" target="_blank" rel="noopener">marginlab.ai's Claude Code tracker</a> follows Claude specifically and can surface signals an Arena-wide Elo view misses. <a href="https://github.com/mayerwin/AI-Arena-History" target="_blank" rel="noopener"><strong>PRs welcome</strong></a> for web-interface evaluations or other longitudinal trackers worth linking.</p>
+            </section>
         </div>
     </main>
 
