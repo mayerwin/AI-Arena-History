@@ -1,4 +1,4 @@
-# Arena AI Model ELO History
+# Arena AI Model Elo History
 
 **Live Tracker:** [https://mayerwin.github.io/AI-Arena-History/](https://mayerwin.github.io/AI-Arena-History/)
 
@@ -17,7 +17,7 @@ The data is automatically fetched daily from the official [LM Arena Leaderboard 
 
 ## 🧠 How the Chart Logic Works
 - **One Curve per Lab:** We consolidate models so each major AI lab has exactly **ONE curve** representing their leading flagship lineage.
-- **Continuous Tracking:** The chart plots the active flagship's ELO.
+- **Continuous Tracking:** The chart plots the active flagship's Elo.
 - **New Releases:** When a lab drops a new flagship model, it seamlessly replaces the old one. The transition is marked explicitly with the new model's name on the chart.
 - **Visualizing Degradation:** Any downward trend in a model's score between releases clearly shows performance degradation over time.
 

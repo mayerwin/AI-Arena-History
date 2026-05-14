@@ -102,7 +102,7 @@ db.exec("INSTALL httpfs; LOAD httpfs;", (err) => {
         const finalChartData = {};
 
         // Collapse "inference mode" variants of the same underlying model (e.g. -thinking,
-        // -reasoning, -high) so the chart doesn't flip between them when their ELOs are within
+        // -reasoning, -high) so the chart doesn't flip between them when their Elos are within
         // noise of each other. The base name is what we display.
         //
         // -thinking and -reasoning are universal inference-mode suffixes.
@@ -120,7 +120,7 @@ db.exec("INSTALL httpfs; LOAD httpfs;", (err) => {
             return n;
         }
 
-        // 2. For each lab, pick the active flagship per date as the model with the highest ELO
+        // 2. For each lab, pick the active flagship per date as the model with the highest Elo
         //    among all flagship-eligible models present on that date. Picking by "latest release"
         //    is wrong: a lab can ship a mid-tier model (e.g. Sonnet) while its higher-tier
         //    flagship (Opus) is still the top performer.

@@ -1,7 +1,7 @@
 # Agent Instructions
 
 ## Purpose
-This repository visualizes the ELO degradation and flagship progression of major AI labs on the LM Arena Leaderboard. It tracks a single continuum (curve) for each lab by seamlessly substituting older models for newer flagship ones when they are released.
+This repository visualizes the Elo degradation and flagship progression of major AI labs on the LM Arena Leaderboard. It tracks a single continuum (curve) for each lab by seamlessly substituting older models for newer flagship ones when they are released.
 
 ## The Challenge: Identifying Flagship Models
 With many models appearing on the leaderboard (e.g., test versions, small parameter versions, quantized variants), we must reliably identify the **flagship** models for each major lab (OpenAI, Anthropic, Google, Qwen, Mistral, xAI, Moonshot). 

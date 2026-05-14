@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arena AI Model ELO History</title>
+    <title>Arena AI Model Elo History</title>
     <meta name="description" content="Visualizing AI flagship model degradation and progression over time.">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -212,7 +212,7 @@
             <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
             <span id="theme-label" class="theme-label">Auto</span>
         </button>
-        <h1>Arena AI Model ELO History</h1>
+        <h1>Arena AI Model Elo History</h1>
         <p class="subtitle">Exposing hidden nerfing, censorship, and quantization over time by tracking the true lifecycle of flagship AI models.</p>
     </header>
 
@@ -236,7 +236,7 @@
                 <h2>How does the chart logic work?</h2>
                 <p>Each major AI lab has exactly <strong>ONE curve</strong> representing their flagship lineage. At each point in time the curve tracks the lab's <strong>highest-rated</strong> flagship-eligible model on the leaderboard — not just the most recently announced one.</p>
                 <ul>
-                    <li><strong>Highest-ELO flagship:</strong> If a lab ships a mid-tier model (e.g. Sonnet) while a higher-tier one (e.g. Opus) is still the top performer, the curve stays on Opus.</li>
+                    <li><strong>Highest-Elo flagship:</strong> If a lab ships a mid-tier model (e.g. Sonnet) while a higher-tier one (e.g. Opus) is still the top performer, the curve stays on Opus.</li>
                     <li><strong>Inference-mode variants collapsed:</strong> Suffixes like <code>-thinking</code>, <code>-reasoning</code>, and <code>-high</code> are the same underlying model in a different mode — they're merged so the curve doesn't flip-flop between them.</li>
                     <li><strong>New releases:</strong> Shown as marker points with labels, often accompanied by a jump in score.</li>
                     <li><strong>Degradation:</strong> Any downward trend in a model's lifecycle between releases is clearly visible.</li>
@@ -1002,7 +1002,7 @@
                         return '<div style="font-weight:bold;color:' + params.color + ';margin-bottom:4px;">' + params.seriesName + '</div>' +
                                '<div>Model: ' + model + '</div>' +
                                '<div>Date: ' + date + '</div>' +
-                               '<div>ELO: ' + rating + '</div>';
+                               '<div>Elo: ' + rating + '</div>';
                     }
                 },
                 legend: { show: false },

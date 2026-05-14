@@ -1,7 +1,7 @@
 {
   "name": "ai-arena-history",
   "version": "1.0.0",
-  "description": "Arena AI Model ELO History",
+  "description": "Arena AI Model Elo History",
   "main": "update_data.js",
   "scripts": {
     "update": "node update_data.js"
