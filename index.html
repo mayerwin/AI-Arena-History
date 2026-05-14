@@ -213,7 +213,7 @@
             <span id="theme-label" class="theme-label">Auto</span>
         </button>
         <h1>Arena AI Model Elo History</h1>
-        <p class="subtitle">Exposing hidden nerfing, censorship, and quantization over time by tracking the true lifecycle of flagship AI models.</p>
+        <p class="subtitle">Tracking the public Elo lifecycle of flagship AI models over time — to surface any nerfing, censorship, or quantization that the data reveals.</p>
     </header>
 
     <main>
@@ -225,8 +225,9 @@
         <div class="content-grid">
             <div class="card">
                 <h2>Why this exists?</h2>
-                <p>AI labs frequently update their models post-launch. These updates sometimes introduce "nerfs" such as aggressive censorship, excessive quantization (to save compute costs), or behavioral degradation. This chart exposes these hidden trends.</p>
-                <p><strong>Note on Web UIs vs. API:</strong> LMSYS Arena tests model performance via API endpoints (the "raw" model). Consumer chat interfaces (like gemini.com or chatgpt.com) often add system prompts, safety filters, and UI-specific wrappers not present in the raw API. Providers may also silently switch to <strong>quantized (lower-precision)</strong> versions of models to save compute during peak load, leading to perceived "nerfing" the API benchmarks don't fully capture. <strong>PRs are welcome</strong> for data sources representing true web-interface evaluations.</p>
+                <p>AI labs frequently update their models post-launch, and users regularly report perceived "nerfs": excessive quantization (to save compute costs), aggressive censorship, or behavioral degradation. This chart plots the public Elo lifecycle of each lab's flagship so any such trends would be visible at a glance. It's an imperfect lens (see caveats below) but the most consistent long-running signal currently available.</p>
+                <p><strong>Caveat 1 — Web UIs vs. API:</strong> Arena AI tests model performance via API endpoints (the "raw" model). Consumer chat interfaces (like gemini.com or chatgpt.com) often add system prompts, safety filters, and UI-specific wrappers not present in the raw API. Providers may also silently switch to <strong>quantized (lower-precision)</strong> versions of models to save compute during peak load, leading to perceived "nerfing" the API benchmarks don't fully capture. <strong>PRs are welcome</strong> for data sources representing true web-interface evaluations.</p>
+                <p><strong>Caveat 2 — Elo is relative:</strong> Arena's Elo rating measures performance <em>relative</em> to the rest of the leaderboard. When stronger models join — or peers improve — an existing model's Elo can drift down even if nothing about that model has changed. Conversely, if every model degrades in parallel, the rating won't reveal it. Elo is the least-imperfect long-running proxy I could find; a historical fixed-benchmark dataset would have made this a cleaner study, but I couldn't locate one — pointers welcome.</p>
             </div>
             <div class="card">
                 <h2>Where does the data come from?</h2>
@@ -239,8 +240,13 @@
                     <li><strong>Highest-Elo flagship:</strong> If a lab ships a mid-tier model (e.g. Sonnet) while a higher-tier one (e.g. Opus) is still the top performer, the curve stays on Opus.</li>
                     <li><strong>Inference-mode variants collapsed:</strong> Suffixes like <code>-thinking</code>, <code>-reasoning</code>, and <code>-high</code> are the same underlying model in a different mode — they're merged so the curve doesn't flip-flop between them.</li>
                     <li><strong>New releases:</strong> Shown as marker points with labels, often accompanied by a jump in score.</li>
-                    <li><strong>Degradation:</strong> Any downward trend in a model's lifecycle between releases is clearly visible.</li>
+                    <li><strong>Possible degradation:</strong> Any downward trend in a model's lifecycle between releases is visible here — but read the caveats first: an Elo drop can also reflect stronger competitors entering the leaderboard, not the model itself changing.</li>
                 </ul>
+            </div>
+            <div class="card">
+                <h2>Related work</h2>
+                <p>For a Claude-only view, <a href="https://marginlab.ai/trackers/claude-code/" target="_blank" rel="noopener">marginlab.ai's Claude Code tracker</a> follows Claude's performance specifically over time — a complementary lens if you care about the Claude lineage in particular, since it can capture signals that an Arena-wide Elo view doesn't.</p>
+                <p>If you know of other longitudinal trackers — especially anything benchmarking the actual web/chat interfaces rather than raw API endpoints, or any historical fixed-benchmark dataset — please open a PR or issue and I'll add it here.</p>
             </div>
         </div>
     </main>
