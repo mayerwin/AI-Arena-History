@@ -1,7 +1,7 @@
 # Agent Instructions
 
 ## Purpose
-This repository visualizes the Elo degradation and flagship progression of major AI labs on the LM Arena Leaderboard. It tracks a single continuum (curve) for each lab by seamlessly substituting older models for newer flagship ones when they are released.
+This repository visualizes the Elo degradation and flagship progression of major AI labs on the Arena AI Leaderboard. It tracks a single continuum (curve) for each lab by seamlessly substituting older models for newer flagship ones when they are released.
 
 ## The Challenge: Identifying Flagship Models
 With many models appearing on the leaderboard (e.g., test versions, small parameter versions, quantized variants), we must reliably identify the **flagship** models for each major lab (OpenAI, Anthropic, Google, Qwen, Mistral, xAI, Moonshot). 
@@ -26,7 +26,7 @@ Yes, **GitHub Actions can utilize basic agents (LLMs)**! You do not need a massi
 1. **Fetch Daily Data**: The workflow downloads the daily models list.
 2. **LLM Evaluation Step**: A simple Python/Node script sends the list of new models to an LLM API (OpenAI, Anthropic, etc.).
 3. **Prompting the Agent**:
-   *Prompt:* "Given these new model names from the LM Arena, identify if any of them are the new ultimate flagship model for OpenAI, Anthropic, Google, Mistral, Qwen, xAI, or Moonshot. Return a JSON mapping updating our keyword rules if necessary."
+   *Prompt:* "Given these new model names from Arena AI, identify if any of them are the new ultimate flagship model for OpenAI, Anthropic, Google, Mistral, Qwen, xAI, or Moonshot. Return a JSON mapping updating our keyword rules if necessary."
 4. **Automated PR**: If the agent determines a new heuristic is needed (e.g., it sees `claude-5-pinnacle`), the workflow can automatically generate a PR modifying `update_data.js`.
 
 Currently, the heuristic is static and extremely robust. But if you wish to fully automate adaptation to new naming schemes, you simply need to inject a basic API call step into the existing `.github/workflows/update.yml`.

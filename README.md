@@ -8,7 +8,7 @@ AI labs frequently update their models post-launch, and users regularly report p
 This repository plots the **public Elo lifecycle** of every flagship AI model from major labs (OpenAI, Anthropic, Google, xAI, Mistral, Qwen, Moonshot) on a single, continuous timeline, so any such trend that shows up in Arena's public data is visible at a glance. It's an imperfect lens (see caveats below) but the most consistent long-running signal currently available.
 
 ## 📊 Where does the data come from?
-The data is automatically fetched daily from the official [LM Arena Leaderboard Dataset](https://huggingface.co/datasets/lmarena-ai/leaderboard-dataset) on Hugging Face. The Arena relies on thousands of blind, crowdsourced human evaluations, making it the most robust metric of actual model capability.
+The data is automatically fetched daily from the official [Arena AI Leaderboard Dataset](https://huggingface.co/datasets/lmarena-ai/leaderboard-dataset) on Hugging Face. The Arena relies on thousands of blind, crowdsourced human evaluations, making it the most robust metric of actual model capability.
 
 > [!IMPORTANT]
 > **Caveat 1: Web interfaces vs. API.** Arena tests via **API endpoints**, so this chart reflects "raw" model capability. Consumer chat interfaces (gemini.com, chatgpt.com, etc.) add system prompts, safety filters, and UI wrappers not present in the raw API, and providers may silently switch to **quantized (lower-precision)** versions during peak load. Perceived "nerfing" in those products may not show up here.
