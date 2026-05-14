@@ -179,9 +179,30 @@
         }
         .card h2 { color: var(--accent); margin-top: 0; }
         .card p { color: var(--text-muted); }
-        .card ul { color: var(--text-muted); padding-left: 1.2rem; margin: 1rem 0 0 0; }
-        .card li { margin-bottom: 0.55rem; line-height: 1.6; }
+        .card ul {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0 0 0;
+            color: var(--text-muted);
+        }
+        .card li {
+            position: relative;
+            padding-left: 1.35rem;
+            margin-bottom: 0.625rem;
+            line-height: 1.55;
+        }
         .card li:last-child { margin-bottom: 0; }
+        .card li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.6em;
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 1px;
+            opacity: 0.75;
+        }
         .card code {
             font-family: 'JetBrains Mono', 'SF Mono', Consolas, Menlo, monospace;
             font-size: 0.85em;
@@ -219,6 +240,7 @@
             position: relative;
             z-index: 1;
         }
+        .caveat-card h2 { padding-right: 3.5rem; }
         .related-band {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
