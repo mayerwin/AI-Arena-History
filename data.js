@@ -999,6 +999,11 @@ const CHART_DATA = {
       "date": "2026-05-19",
       "model_name": "gpt-5.4",
       "rating": 1471.3478705351126
+    },
+    {
+      "date": "2026-05-27",
+      "model_name": "gpt-5.4",
+      "rating": 1472.3236292855293
     }
   ],
   "Google": [
@@ -1996,6 +2001,11 @@ const CHART_DATA = {
       "date": "2026-05-19",
       "model_name": "gemini-3.1-pro-preview",
       "rating": 1482.8134614129021
+    },
+    {
+      "date": "2026-05-27",
+      "model_name": "gemini-3.1-pro-preview",
+      "rating": 1481.4180878042043
     }
   ],
   "Anthropic": [
@@ -2953,6 +2963,11 @@ const CHART_DATA = {
       "date": "2026-05-19",
       "model_name": "claude-opus-4-6",
       "rating": 1500.0361791642981
+    },
+    {
+      "date": "2026-05-27",
+      "model_name": "claude-opus-4-6",
+      "rating": 1499.3173401234678
     }
   ],
   "xAI": [
@@ -3710,6 +3725,11 @@ const CHART_DATA = {
       "date": "2026-05-19",
       "model_name": "grok-4.20-beta-0309",
       "rating": 1453.4862189459766
+    },
+    {
+      "date": "2026-05-27",
+      "model_name": "grok-4.20-beta-0309",
+      "rating": 1453.7932199178938
     }
   ],
   "Qwen": [
@@ -4677,6 +4697,11 @@ const CHART_DATA = {
       "date": "2026-05-19",
       "model_name": "qwen3.7-max-preview",
       "rating": 1475.2630335106926
+    },
+    {
+      "date": "2026-05-27",
+      "model_name": "qwen3.7-max-preview",
+      "rating": 1474.5873703060963
     }
   ],
   "Mistral": [
@@ -5664,6 +5689,11 @@ const CHART_DATA = {
       "date": "2026-05-19",
       "model_name": "mistral-large-3",
       "rating": 1430.286011994361
+    },
+    {
+      "date": "2026-05-27",
+      "model_name": "mistral-large-3",
+      "rating": 1430.0971717688246
     }
   ],
   "Moonshot (Kimi)": [
@@ -6091,6 +6121,11 @@ const CHART_DATA = {
       "date": "2026-05-19",
       "model_name": "kimi-k2.6",
       "rating": 1456.7218117218372
+    },
+    {
+      "date": "2026-05-27",
+      "model_name": "kimi-k2.6",
+      "rating": 1456.144290476874
     }
   ]
 };
