@@ -296,6 +296,58 @@
         }
         #show-all-btn:hover { filter: brightness(1.1); }
 
+        /* Flagship-mode toggle. Desktop: pinned top-right, above the right-hand labels (JS aligns
+           its right edge to the labels). Mobile/portrait: static, centered below the chart's labels. */
+        #mode-toggle {
+            position: absolute;
+            top: 16px;
+            right: 24px;
+            z-index: 100;
+            display: inline-flex;
+            gap: 2px;
+            padding: 3px;
+            border-radius: 9px;
+            background: var(--select-bg);
+            border: 1px solid var(--select-border);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .mode-btn {
+            appearance: none;
+            -webkit-appearance: none;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-family: 'Outfit', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1;
+            padding: 6px 11px;
+            border-radius: 6px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .mode-btn:hover { color: var(--text-main); }
+        .mode-btn.active { background: var(--accent); color: #fff; }
+
+        /* Bottom-label layouts: the labels render below the canvas, so the toggle flows below them. */
+        @media (max-width: 700px) {
+            #mode-toggle {
+                position: static;
+                margin: 14px auto 2px auto;
+                width: fit-content;
+                box-shadow: none;
+            }
+        }
+        @media (max-width: 900px) and (orientation: portrait) {
+            #mode-toggle {
+                position: static;
+                margin: 14px auto 2px auto;
+                width: fit-content;
+                box-shadow: none;
+            }
+        }
+
         @media (max-width: 768px) {
             h1 { font-size: 2rem; }
             .subtitle { font-size: 1.05rem; }
@@ -344,6 +396,12 @@
         <div class="chart-wrapper">
             <button id="show-all-btn">Show All Models</button>
             <div id="chart-container"></div>
+            <div id="mode-toggle" role="group" aria-label="Flagship selection mode">
+                <button type="button" class="mode-btn active" data-mode="highest" aria-pressed="true"
+                        title="Each lab's highest-rated flagship at every point in time">Highest Elo</button>
+                <button type="button" class="mode-btn" data-mode="latest" aria-pressed="false"
+                        title="Each lab's most recently released flagship, even when its Elo dipped below a predecessor">Latest release</button>
+            </div>
         </div>
 
         <div class="section-stack">
@@ -355,9 +413,10 @@
                 </div>
                 <div class="card">
                     <h2>How the chart works</h2>
-                    <p>Each lab gets exactly <strong>one curve</strong>, tracking that lab's <strong>highest-rated</strong> flagship-eligible model at every point in time, not just the most recently announced one.</p>
+                    <p>Each lab gets exactly <strong>one curve</strong>. The toggle above the chart switches how that curve picks the lab's active model at each point in time.</p>
                     <ul>
-                        <li>If a lab ships a mid-tier model (e.g. Sonnet) while a higher-tier one (e.g. Opus) still ranks above it, the curve stays on Opus.</li>
+                        <li><strong>Highest Elo</strong> (default): tracks the lab's highest-rated flagship-eligible model, not just the most recently announced one. If a lab ships a mid-tier model (e.g. Sonnet) while a higher-tier one (e.g. Opus) still ranks above it, the curve stays on Opus.</li>
+                        <li><strong>Latest release</strong>: tracks the lab's newest flagship instead, even when its Elo dipped below a predecessor (e.g. <code>claude-opus-4-8</code> below <code>4-6</code>) — the clearest view of post-release degradation.</li>
                         <li>Inference-mode variants (suffixes like <code>-thinking</code>, <code>-reasoning</code>, <code>-high</code>) are merged into the parent so the curve doesn't flip-flop between modes.</li>
                         <li>New releases appear as labeled marker points, often with a jump in score.</li>
                         <li>Downward trends between releases are visible too, but read the caveats below before treating them as proof.</li>
@@ -403,6 +462,7 @@
         let labRank = {};
         let clickedSeries = new Set();
         let hoveredSeries = null;
+        let flagshipMode = 'highest'; // 'highest' (top-rated flagship) | 'latest' (newest release)
         let currentMaxDate = Infinity;
         let currentTheme = 'dark';
         let resizeObserver = null;
@@ -1046,14 +1106,17 @@
             }
         }
 
-        // Position the Show All Models button so its right edge aligns with the labels' right edge.
-        // On portrait/bottom-label layouts, fall back to the CSS default.
+        // Align the on-chart controls to the right-hand labels' right edge. Desktop: pin the mode
+        // toggle top-right and stack the Show All button just below it. On portrait/bottom-label
+        // layouts, clear the inline positions so both fall back to their CSS (toggle flows below).
         function alignShowAllButton(btn) {
-            if (!btn || !myChart) return;
+            const modeToggle = document.getElementById('mode-toggle');
             if (isMobilePortrait()) {
-                btn.style.right = '';
+                if (btn) { btn.style.right = ''; btn.style.top = ''; }
+                if (modeToggle) { modeToggle.style.right = ''; modeToggle.style.top = ''; }
                 return;
             }
+            if (!myChart) return;
             const wrapper = document.querySelector('.chart-wrapper');
             const container = document.getElementById('chart-container');
             if (!wrapper || !container) return;
@@ -1062,8 +1125,18 @@
             // Labels end 4px from the canvas right edge (RIGHT_MARGIN in buildEndpointLabels)
             const LABEL_RIGHT_MARGIN = 4;
             const labelRightInViewport = containerRect.right - LABEL_RIGHT_MARGIN;
-            const buttonRight = Math.max(0, wrapperRect.right - labelRightInViewport);
-            btn.style.right = buttonRight + 'px';
+            const rightOffset = Math.max(0, wrapperRect.right - labelRightInViewport);
+
+            let stackTop = 16;
+            if (modeToggle && modeToggle.style.display !== 'none') {
+                modeToggle.style.top = '16px';
+                modeToggle.style.right = rightOffset + 'px';
+                stackTop = modeToggle.offsetTop + modeToggle.offsetHeight + 8; // sit Show All below it
+            }
+            if (btn) {
+                btn.style.right = rightOffset + 'px';
+                btn.style.top = stackTop + 'px';
+            }
         }
 
         // ---------- Chart render ----------
@@ -1239,20 +1312,56 @@
 
             // Defensive: drop empty/invalid labs in case data.js is older than the current
             // update_data.js (or hand-edited).
-            Object.keys(CHART_DATA).forEach(function(lab) {
-                const rows = CHART_DATA[lab];
-                if (!Array.isArray(rows) || rows.length === 0) {
-                    delete CHART_DATA[lab];
-                }
-            });
+            function cleanData(d) {
+                if (!d) return;
+                Object.keys(d).forEach(function(lab) {
+                    const rows = d[lab];
+                    if (!Array.isArray(rows) || rows.length === 0) delete d[lab];
+                });
+            }
 
-            // Lab rank by current final rating
-            const lastRatings = Object.keys(CHART_DATA).map(function(lab) {
-                const rows = CHART_DATA[lab];
-                return { lab: lab, rating: rows[rows.length - 1].rating };
-            });
-            lastRatings.sort(function(a, b) { return b.rating - a.rating; });
-            lastRatings.forEach(function(item, index) { labRank[item.lab] = index; });
+            // Lab rank by current final rating. Recomputed when the flagship mode changes, since the
+            // active model (and thus the final rating that determines ordering) can differ per mode.
+            function computeLabRank() {
+                labRank = {};
+                const lastRatings = Object.keys(CHART_DATA).map(function(lab) {
+                    const rows = CHART_DATA[lab];
+                    return { lab: lab, rating: rows[rows.length - 1].rating };
+                });
+                lastRatings.sort(function(a, b) { return b.rating - a.rating; });
+                lastRatings.forEach(function(item, index) { labRank[item.lab] = index; });
+            }
+
+            // ---------- Flagship mode (Highest Elo vs Latest release) ----------
+            // CHART_DATA is a reassignable alias; swap it between the two emitted datasets.
+            const HIGHEST_REF = (typeof CHART_DATA_HIGHEST !== 'undefined') ? CHART_DATA_HIGHEST : CHART_DATA;
+            const hasLatest = (typeof CHART_DATA_LATEST !== 'undefined') && CHART_DATA_LATEST && Object.keys(CHART_DATA_LATEST).length > 0;
+            const modeToggle = document.getElementById('mode-toggle');
+            const modeBtns = modeToggle ? Array.prototype.slice.call(modeToggle.querySelectorAll('.mode-btn')) : [];
+
+            function dataForMode(mode) {
+                return (mode === 'latest' && hasLatest) ? CHART_DATA_LATEST : HIGHEST_REF;
+            }
+            function reflectModeButtons() {
+                modeBtns.forEach(function(b) {
+                    const active = b.getAttribute('data-mode') === flagshipMode;
+                    b.classList.toggle('active', active);
+                    b.setAttribute('aria-pressed', active ? 'true' : 'false');
+                });
+            }
+
+            try {
+                const saved = localStorage.getItem('flagship-mode');
+                if (saved === 'latest' || saved === 'highest') flagshipMode = saved;
+            } catch (e) { /* ignore */ }
+            if (flagshipMode === 'latest' && !hasLatest) flagshipMode = 'highest';
+            // No second dataset (e.g. stale cached data.js): hide the toggle, stay on highest-Elo.
+            if (!hasLatest && modeToggle) modeToggle.style.display = 'none';
+
+            CHART_DATA = dataForMode(flagshipMode);
+            cleanData(CHART_DATA);
+            computeLabRank();
+            reflectModeButtons();
 
             // Allow preselecting labs via URL: ?lab=OpenAI&lab=Anthropic
             try {
@@ -1292,6 +1401,22 @@
                 currentState = states[nextIdx];
                 localStorage.setItem('theme-preference', currentState);
                 applyCurrentTheme();
+            });
+
+            function setFlagshipMode(mode) {
+                if (mode === 'latest' && !hasLatest) mode = 'highest';
+                if (mode !== 'highest' && mode !== 'latest') return;
+                if (mode === flagshipMode) return;
+                flagshipMode = mode;
+                try { localStorage.setItem('flagship-mode', mode); } catch (e) { /* ignore */ }
+                CHART_DATA = dataForMode(mode);
+                cleanData(CHART_DATA);
+                computeLabRank();
+                reflectModeButtons();
+                applyCurrentTheme(); // re-render against the swapped dataset
+            }
+            modeBtns.forEach(function(b) {
+                b.addEventListener('click', function() { setFlagshipMode(b.getAttribute('data-mode')); });
             });
 
             const mq = window.matchMedia('(prefers-color-scheme: dark)');

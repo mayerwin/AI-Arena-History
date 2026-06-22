@@ -8,8 +8,14 @@ const LAB_CONFIGS = {
         orgMatch: ['openai'],
         isFlagship: (name) => {
             const n = name.toLowerCase();
-            return (n.includes('gpt-4') || n.includes('gpt-5') || n.includes('o1') || n.includes('o3') || n.includes('o4')) 
+            return (n.includes('gpt-4') || n.includes('gpt-5') || n.includes('o1') || n.includes('o3') || n.includes('o4'))
                 && !n.includes('mini') && !n.includes('nano') && !n.includes('lite');
+        },
+        // "Latest release" mode only: drop the fast ('instant') and chat-tuned variants so the
+        // newest-by-date pick stays on the core reasoning flagship (e.g. gpt-5.5, not gpt-5.5-instant).
+        flagshipLine: (name) => {
+            const n = name.toLowerCase();
+            return !n.includes('instant') && !n.includes('chat');
         }
     },
     'Google': {
@@ -25,7 +31,10 @@ const LAB_CONFIGS = {
         isFlagship: (name) => {
             const n = name.toLowerCase();
             return !n.includes('haiku') && !n.includes('instant');
-        }
+        },
+        // "Latest release" mode only: restrict to the Opus flagship line so "newest" can't jump to a
+        // newer-but-lower-tier sibling (e.g. claude-sonnet-* or claude-fable-*) that outranks it by date.
+        flagshipLine: (name) => name.toLowerCase().includes('opus')
     },
     'xAI': {
         orgMatch: ['xai'],
@@ -114,8 +123,6 @@ db.exec("INSTALL httpfs; LOAD httpfs;", (err) => {
             }
         });
         
-        const finalChartData = {};
-
         // Collapse "inference mode" variants of the same underlying model (e.g. -thinking,
         // -reasoning, -high) so the chart doesn't flip between them when their Elos are within
         // noise of each other. The base name is what we display.
@@ -135,19 +142,26 @@ db.exec("INSTALL httpfs; LOAD httpfs;", (err) => {
             return n;
         }
 
-        // 2. For each lab, pick the active flagship per date as the model with the highest Elo
-        //    among all flagship-eligible models present on that date. Picking by "latest release"
-        //    is wrong: a lab can ship a mid-tier model (e.g. Sonnet) while its higher-tier
-        //    flagship (Opus) is still the top performer.
-        for (const [lab, rows] of Object.entries(labRecords)) {
+        // Build a single per-lab continuum. `pick(groups, firstSeen)` chooses the active base among
+        // the flagship-eligible models present on each date; the two pickers below give the two modes.
+        function buildLabSeries(rows, pick) {
             const byDate = {};
             rows.forEach(r => {
                 if (!byDate[r.date]) byDate[r.date] = [];
                 byDate[r.date].push(r);
             });
 
-            const labSeriesData = [];
-            for (const date of Object.keys(byDate).sort()) {
+            const sortedDates = Object.keys(byDate).sort();
+
+            // Earliest date each base model appears (used by the "latest release" picker).
+            const firstSeen = {};
+            sortedDates.forEach(date => byDate[date].forEach(r => {
+                const base = baseModelName(r.model_name);
+                if (!(base in firstSeen)) firstSeen[base] = date; // dates iterated ascending
+            }));
+
+            const series = [];
+            for (const date of sortedDates) {
                 // Group records by base name; keep the best variant per base.
                 const byBase = {};
                 byDate[date].forEach(r => {
@@ -156,32 +170,61 @@ db.exec("INSTALL httpfs; LOAD httpfs;", (err) => {
                         byBase[base] = { name: base, rating: r.rating };
                     }
                 });
-                // Pick the base group with the highest rating.
-                let best = null;
-                for (const g of Object.values(byBase)) {
-                    if (!best || g.rating > best.rating) best = g;
-                }
+                const best = pick(Object.values(byBase), firstSeen);
                 if (best) {
                     // Skip rows identical to the prior one — no information added, just bloat.
-                    const last = labSeriesData[labSeriesData.length - 1];
+                    const last = series[series.length - 1];
                     if (!last || last.model_name !== best.name || last.rating !== best.rating) {
-                        labSeriesData.push({
-                            date: date,
-                            model_name: best.name,
-                            rating: best.rating
-                        });
+                        series.push({ date: date, model_name: best.name, rating: best.rating });
                     }
                 }
             }
-
-            // Drop empty labs (no flagship-eligible data) so the frontend never has to defend
-            // against zero-length rows[].
-            if (labSeriesData.length > 0) {
-                finalChartData[lab] = labSeriesData;
-            }
+            return series;
         }
 
-        fs.writeFileSync('data.js', 'const CHART_DATA = ' + JSON.stringify(finalChartData, null, 2) + ';');
+        // "Highest Elo" (default): the top-rated flagship present on each date. Picking by latest
+        // release is wrong here — a lab can ship a mid-tier model (e.g. Sonnet) while its higher-tier
+        // flagship (Opus) is still the top performer, and the curve should stay on Opus.
+        const pickHighestElo = (groups) => {
+            let best = null;
+            for (const g of groups) if (!best || g.rating > best.rating) best = g;
+            return best;
+        };
+
+        // "Latest release": the most recently introduced flagship present on each date (ties broken
+        // by rating). This deliberately surfaces Elo regressions when a newer flagship ranks below
+        // its predecessor (e.g. claude-opus-4-8 below 4-6). Restricted per-lab via `flagshipLine`
+        // so "newest" can't jump to a cheaper/side model.
+        const pickLatestRelease = (groups, firstSeen) => {
+            let best = null;
+            for (const g of groups) {
+                if (!best) { best = g; continue; }
+                const fg = firstSeen[g.name], fb = firstSeen[best.name];
+                if (fg > fb || (fg === fb && g.rating > best.rating)) best = g;
+            }
+            return best;
+        };
+
+        // 2. For each lab, build both continua. Drop empty labs (no flagship-eligible data) so the
+        //    frontend never has to defend against zero-length rows[].
+        const finalChartData = {};   // highest-Elo (default)
+        const latestChartData = {};  // latest-release
+        for (const [lab, rows] of Object.entries(labRecords)) {
+            const highest = buildLabSeries(rows, pickHighestElo);
+            if (highest.length > 0) finalChartData[lab] = highest;
+
+            const lineFilter = LAB_CONFIGS[lab].flagshipLine;
+            const lineRows = lineFilter ? rows.filter(r => lineFilter(r.model_name)) : rows;
+            const latest = buildLabSeries(lineRows, pickLatestRelease);
+            if (latest.length > 0) latestChartData[lab] = latest;
+        }
+
+        // Emit both series sets. `CHART_DATA` aliases the active one (highest-Elo by default); the
+        // frontend reassigns it to CHART_DATA_LATEST when the user flips the on-chart mode toggle.
+        fs.writeFileSync('data.js',
+            'const CHART_DATA_HIGHEST = ' + JSON.stringify(finalChartData, null, 2) + ';\n' +
+            'const CHART_DATA_LATEST = ' + JSON.stringify(latestChartData, null, 2) + ';\n' +
+            'var CHART_DATA = CHART_DATA_HIGHEST;\n');
         console.log("data.js generated successfully.");
     });
 });
