@@ -54,6 +54,20 @@ const LAB_CONFIGS = {
             const n = name.toLowerCase();
             return n.includes('kimi') && !n.includes('instant') && !n.includes('mini');
         }
+    },
+    // GLM = Zhipu AI's model family (internationally branded Z.ai; org appears as
+    // 'Zhipu', 'Zhipu AI', or 'zai' in the data, and as 'Tsinghua' for the legacy ChatGLM line).
+    'GLM': {
+        orgMatch: ['zhipu', 'zai'],
+        isFlagship: (name) => {
+            const n = name.toLowerCase();
+            return n.includes('glm')
+                && !n.includes('chatglm')  // legacy 6B-class ChatGLM
+                && !n.includes('air')      // lightweight/distilled tier
+                && !n.includes('flash')    // fast/small tier
+                && !n.endsWith('v')        // vision variants (e.g. glm-4.6v)
+                && !/-\d+b\b/.test(n);      // explicit small param counts (e.g. -9b)
+        }
     }
 };
 
@@ -87,8 +101,9 @@ db.exec("INSTALL httpfs; LOAD httpfs;", (err) => {
             const name = (row.model_name || '').toLowerCase();
             
             for (const [lab, config] of Object.entries(LAB_CONFIGS)) {
-                if (config.orgMatch.some(o => org.includes(o)) || 
-                   (lab === 'Moonshot (Kimi)' && name.includes('kimi'))) {
+                if (config.orgMatch.some(o => org.includes(o)) ||
+                   (lab === 'Moonshot (Kimi)' && name.includes('kimi')) ||
+                   (lab === 'GLM' && name.includes('glm'))) {
                     assignedLab = lab;
                     break;
                 }
