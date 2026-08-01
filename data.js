@@ -8652,6 +8652,11 @@ const CHART_DATA_LATEST = {
       "date": "2026-07-27",
       "model_name": "gpt-5.6-sol-xhigh",
       "rating": 1455.2892466368594
+    },
+    {
+      "date": "2026-07-30",
+      "model_name": "gpt-5.6-terra-xhigh",
+      "rating": 1448.8252228749911
     }
   ],
   "Google": [
