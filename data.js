@@ -1079,6 +1079,11 @@ const CHART_DATA_HIGHEST = {
       "date": "2026-07-27",
       "model_name": "gpt-5.4",
       "rating": 1469.9082773329292
+    },
+    {
+      "date": "2026-08-02",
+      "model_name": "gpt-5.5",
+      "rating": 1470.4800860912146
     }
   ],
   "Google": [
@@ -2156,6 +2161,11 @@ const CHART_DATA_HIGHEST = {
       "date": "2026-07-27",
       "model_name": "gemini-3-pro",
       "rating": 1479.460048527476
+    },
+    {
+      "date": "2026-08-02",
+      "model_name": "gemini-3-pro",
+      "rating": 1479.5739439890067
     }
   ],
   "Anthropic": [
@@ -3193,6 +3203,11 @@ const CHART_DATA_HIGHEST = {
       "date": "2026-07-27",
       "model_name": "claude-opus-5-max",
       "rating": 1511.5966036132436
+    },
+    {
+      "date": "2026-08-02",
+      "model_name": "claude-opus-5-max",
+      "rating": 1507.2592252461232
     }
   ],
   "xAI": [
@@ -4030,6 +4045,11 @@ const CHART_DATA_HIGHEST = {
       "date": "2026-07-27",
       "model_name": "grok-4.20-beta-0309",
       "rating": 1451.727147568406
+    },
+    {
+      "date": "2026-08-02",
+      "model_name": "grok-4.5",
+      "rating": 1451.9667438020178
     }
   ],
   "Qwen": [
@@ -5077,6 +5097,11 @@ const CHART_DATA_HIGHEST = {
       "date": "2026-07-27",
       "model_name": "qwen3.7-max-preview",
       "rating": 1475.1190710286041
+    },
+    {
+      "date": "2026-08-02",
+      "model_name": "qwen3.8-max",
+      "rating": 1496.0832599411456
     }
   ],
   "Mistral": [
@@ -6144,6 +6169,11 @@ const CHART_DATA_HIGHEST = {
       "date": "2026-07-27",
       "model_name": "mistral-large-3",
       "rating": 1429.499787992313
+    },
+    {
+      "date": "2026-08-02",
+      "model_name": "mistral-large-3",
+      "rating": 1429.7881877851223
     }
   ],
   "Moonshot (Kimi)": [
@@ -6651,6 +6681,11 @@ const CHART_DATA_HIGHEST = {
       "date": "2026-07-27",
       "model_name": "kimi-k3-max",
       "rating": 1473.330386057985
+    },
+    {
+      "date": "2026-08-02",
+      "model_name": "kimi-k3-max",
+      "rating": 1472.9595730288056
     }
   ],
   "GLM": [
@@ -7568,6 +7603,11 @@ const CHART_DATA_HIGHEST = {
       "date": "2026-07-27",
       "model_name": "glm-5.1",
       "rating": 1464.994928086198
+    },
+    {
+      "date": "2026-08-02",
+      "model_name": "glm-5.1",
+      "rating": 1465.3763322526054
     }
   ]
 };
@@ -8657,6 +8697,11 @@ const CHART_DATA_LATEST = {
       "date": "2026-07-30",
       "model_name": "gpt-5.6-terra-xhigh",
       "rating": 1448.8252228749911
+    },
+    {
+      "date": "2026-08-02",
+      "model_name": "gpt-5.6-terra-xhigh",
+      "rating": 1448.4104549091235
     }
   ],
   "Google": [
@@ -9734,6 +9779,11 @@ const CHART_DATA_LATEST = {
       "date": "2026-07-27",
       "model_name": "gemini-3.1-pro-preview",
       "rating": 1479.45578371284
+    },
+    {
+      "date": "2026-08-02",
+      "model_name": "gemini-3.1-pro-preview",
+      "rating": 1478.9364868609719
     }
   ],
   "Anthropic": [
@@ -10771,6 +10821,11 @@ const CHART_DATA_LATEST = {
       "date": "2026-07-27",
       "model_name": "claude-opus-5-max",
       "rating": 1511.5966036132436
+    },
+    {
+      "date": "2026-08-02",
+      "model_name": "claude-opus-5-max",
+      "rating": 1507.2592252461232
     }
   ],
   "xAI": [
@@ -11608,6 +11663,11 @@ const CHART_DATA_LATEST = {
       "date": "2026-07-27",
       "model_name": "grok-4.5",
       "rating": 1451.45698231387
+    },
+    {
+      "date": "2026-08-02",
+      "model_name": "grok-4.5",
+      "rating": 1451.9667438020178
     }
   ],
   "Qwen": [
@@ -12655,6 +12715,11 @@ const CHART_DATA_LATEST = {
       "date": "2026-07-27",
       "model_name": "qwen3.7-plus",
       "rating": 1456.4535089156243
+    },
+    {
+      "date": "2026-08-02",
+      "model_name": "qwen3.8-max",
+      "rating": 1496.0832599411456
     }
   ],
   "Mistral": [
@@ -13722,6 +13787,11 @@ const CHART_DATA_LATEST = {
       "date": "2026-07-27",
       "model_name": "mistral-medium-3.5",
       "rating": 1421.0894012525305
+    },
+    {
+      "date": "2026-08-02",
+      "model_name": "mistral-medium-3.5",
+      "rating": 1420.9957426484543
     }
   ],
   "Moonshot (Kimi)": [
@@ -14229,6 +14299,11 @@ const CHART_DATA_LATEST = {
       "date": "2026-07-27",
       "model_name": "kimi-k3-max",
       "rating": 1473.330386057985
+    },
+    {
+      "date": "2026-08-02",
+      "model_name": "kimi-k3-max",
+      "rating": 1472.9595730288056
     }
   ],
   "GLM": [
@@ -15146,6 +15221,11 @@ const CHART_DATA_LATEST = {
       "date": "2026-07-27",
       "model_name": "glm-5.2-max",
       "rating": 1464.3590810035835
+    },
+    {
+      "date": "2026-08-02",
+      "model_name": "glm-5.2-max",
+      "rating": 1464.4994368795624
     }
   ]
 };
