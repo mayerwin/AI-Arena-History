@@ -6686,6 +6686,11 @@ const CHART_DATA_HIGHEST = {
       "date": "2026-08-02",
       "model_name": "kimi-k3-max",
       "rating": 1472.9595730288056
+    },
+    {
+      "date": "2026-08-03",
+      "model_name": "kimi-k2.6",
+      "rating": 1454.741581696474
     }
   ],
   "GLM": [
@@ -14304,6 +14309,11 @@ const CHART_DATA_LATEST = {
       "date": "2026-08-02",
       "model_name": "kimi-k3-max",
       "rating": 1472.9595730288056
+    },
+    {
+      "date": "2026-08-03",
+      "model_name": "kimi-k2.6",
+      "rating": 1454.741581696474
     }
   ],
   "GLM": [
