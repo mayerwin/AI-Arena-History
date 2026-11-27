@@ -1,0 +1,45 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inject analytics script
+        if: vars.TIDESIGHT_URL != '' && vars.TIDESIGHT_SITE_ID != ''
+        env:
+          ANALYTICS_URL: ${{ vars.TIDESIGHT_URL }}
+          ANALYTICS_SITE: ${{ vars.TIDESIGHT_SITE_ID }}
+        run: |
+          python3 -c '
+          import os, pathlib
+          url, site = os.environ["ANALYTICS_URL"], os.environ["ANALYTICS_SITE"]
+          tag = f"  <script async src=\"{url}\" data-site=\"{site}\"></script>\n"
+          p = pathlib.Path("index.html")
+          html = p.read_text(encoding="utf-8")
+          if url not in html:
+              p.write_text(html.replace("</head>", tag + "</head>", 1), encoding="utf-8")
+          '
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - id: deployment
+        uses: actions/deploy-pages@v4
